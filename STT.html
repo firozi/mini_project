@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text</title>
+    <link rel="stylesheet" type="text/css" href="STT.css" />
+</head>
+<body>
+    <div class="main">
+        <div class="content">
+            <h2>Speech to Text</h2>
+            <p>Click on the "Start" button and allow microphone access.</p>
+            <div class="log"><button id="startBtn">Start</button><span id="sound"><img src="sound-log.gif" /></span></div>
+            <h3>Result:</h3>
+            <p id="result"></p>
+        </div>
+        <a href="Index.html"><button class="back-btn">Back To Menu</button></a>
+    </div>
+    
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const result = document.getElementById('result');
+
+        function startSpeechToText() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+
+            recognition.lang = 'en-US hi-IN';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.start();
+
+            recognition.addEventListener('result', (e) => {
+                result.textContent = e.results[0][0].transcript;
+                recognition.stop();
+                document.getElementById("sound").style.display="none";
+            });
+
+            recognition.addEventListener('end', () => {
+                console.log('Recognition stopped');
+            });
+        }
+
+        startBtn.addEventListener('click', () => {
+            startSpeechToText();
+            document.getElementById("sound").style.display="block";
+        });
+    </script>
+</body>
+</html>

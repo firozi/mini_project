@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text to Speech</title>
+    <link rel="stylesheet" type="text/css" href="TTS.css" />
+</head>
+<body>
+    <div class="main">
+        <div class="cont">
+            <h1>Text To Speech Converter</h1>
+            <input type="text" id="text" placeholder="Enter text" />
+        <div class="op"><button onclick="speak()">Speak</button>
+        <select id="voiceList"></select></div></div>
+        <a href="Index.html"><button class="back-btn">Back To Menu</button></a>
+    </div>
+    <script>
+        function populateVoiceList() {
+            if (typeof speechSynthesis !== 'undefined') {
+                var voices = speechSynthesis.getVoices();
+                var select = document.getElementById('voiceList');
+                select.innerHTML = '';
+                for (var i = 0; i < voices.length; i++) {
+                    var option = document.createElement('option');
+                    option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+                    option.setAttribute('data-lang', voices[i].lang);
+                    option.setAttribute('data-name', voices[i].name);
+                    select.appendChild(option);
+                }
+            }
+        }
+
+        function speak() {
+            var text = document.getElementById('text').value;
+            var lang = 'hi-IN';
+            var voiceName = document.getElementById('voiceList').selectedOptions[0].getAttribute('data-name');
+
+            if (typeof speechSynthesis !== 'undefined') {
+                var msg = new SpeechSynthesisUtterance();
+                msg.text = text;
+                msg.lang = lang;
+                msg.voice = speechSynthesis.getVoices().filter(function(voice) {
+                    return voice.name === voiceName;
+                })[0];
+
+                msg.onerror = function(event) {
+                    console.log('Error occurred in speech synthesis: ' + event.error);
+                };
+
+                speechSynthesis.speak(msg);
+            }
+        }
+
+        window.onload = function() {
+            populateVoiceList();
+            if (typeof speechSynthesis !== 'undefined') {
+                speechSynthesis.onvoiceschanged = populateVoiceList;
+            }
+        };
+    </script>
+</body>
+</html>
